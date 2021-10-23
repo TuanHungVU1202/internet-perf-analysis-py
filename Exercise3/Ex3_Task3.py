@@ -1,5 +1,4 @@
 import matplotlib
-import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 
@@ -9,22 +8,33 @@ class Ex3_Task3:
         print("Ex3_T3")
         timestamp_data, linkload_data = self.extract_data(number_of_dataset)
         for idx in range(number_of_dataset):
-            if idx != 1:
+            # for now even with linkload-2 still can use "fake" datetime with interval = 1s
+            if idx >= 0:
                 dates = matplotlib.dates.date2num(timestamp_data[idx])
-                plot = plt.figure("Linkload-" + str(idx+1) + " Timeplot")
-                plt.title("Linkload along time")
-                plt.xlabel("Time (interval = 1s)")
-                plt.ylabel("Linkload (bps)")
-                plt.tight_layout()
-                plt.plot_date(dates, linkload_data[idx])
-            else:
-                print("A")
+                # Timeplot
                 plot = plt.figure("Linkload-" + str(idx + 1) + " Timeplot")
                 plt.title("Linkload along time")
                 plt.xlabel("Time (interval = 1s)")
                 plt.ylabel("Linkload (bps)")
                 plt.tight_layout()
-                plt.scatter(timestamp_data[idx], linkload_data[idx])
+                plt.plot_date(dates, linkload_data[idx], linestyle='solid', marker='None')
+
+                # Lagplot
+                series = pd.Series(linkload_data[idx])
+                lagplot = plt.figure("Linkload-" + str(idx + 1) + " Lag plot")
+                plt.title("Lag plot with Lag-1")
+                plt.xlabel("Linkload (bps) at (T-1)")
+                plt.ylabel("Linkload (bps) at T")
+                pd.plotting.lag_plot(series, lag=1)
+
+                # Autocorrelation plot
+                correlation_plot = plt.figure("Linkload-" + str(idx + 1) + " Autocorrelation plot")
+                plt.title("Autocorrelation plot")
+                plt.xlabel("Lag")
+                plt.ylabel("Autocorrelation")
+                pd.plotting.autocorrelation_plot(series)
+            else:
+                pass
 
         plt.show()
 
