@@ -8,8 +8,8 @@ class Ex3_Task4:
         print("E3_Task4")
         data = self.extract_data()
         sns.set(style="ticks", color_codes=True)
-        # sns.pairplot(data, hue="Time")
         sns.pairplot(data)
+        # sns.pairplot(data, hue="Time")
         # pd.plotting.scatter_matrix(data, alpha=0.2)
         # sns.pairplot(data, vars=["Time", "RXbytes", "RXpackets"], hue="RXbytes")
         plt.show()
@@ -17,6 +17,5 @@ class Ex3_Task4:
     def extract_data(self):
         df = pd.read_csv("Exercise3/r-data/bytes.csv")
         df['Time'] = pd.to_datetime(df['Time'])
-        # print(type(df["Time"].values[0]))
         return df
 
