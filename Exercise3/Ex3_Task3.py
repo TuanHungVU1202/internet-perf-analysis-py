@@ -61,6 +61,4 @@ class Ex3_Task3:
                 timestamp_list.insert(idx, timestamp)
                 linkload_list.insert(idx, linkload)
 
-        # print(timestamp_list[1])
-        # print(linkload_list[1])
         return timestamp_list, linkload_list

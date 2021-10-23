@@ -70,20 +70,6 @@ class Ex3_Task2:
         str_data.pop()
         int_data = list(map(int, str_data))
 
-        # This was intentionally to get the freq for histogram but no use
-        # value = []
-        # freq = []
-        # for x in int_data:
-        #     # check if exists in unique_list or not
-        #     if x not in value:
-        #         value.append(x)
-        #
-        # # sort value list
-        # value.sort()
-        # # traverse new value list
-        # for idx, val in enumerate(value):
-        #     freq.insert(idx, int_data.count(val))
-
         # return data
         sorted_data = np.sort(int_data)
         log_data = list(np.log(int_data))
