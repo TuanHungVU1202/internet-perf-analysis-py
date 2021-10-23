@@ -1,16 +1,11 @@
-import csv
-
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 
 
 class Ex3_Task2:
-    log_scale = "log"
-
-    def plot(self, linear_or_log):
+    def plot(self):
         print("Ex3_T2")
-        raw_data, sorted_data, log_data, sorted_log_data, number_of_data_points = self.extract_data(linear_or_log)
+        raw_data, sorted_data, log_data, sorted_log_data, number_of_data_points = self.extract_data()
 
         scatter_plot = plt.figure("I. Scatterplot")
         plt.scatter(number_of_data_points, raw_data)
@@ -66,7 +61,7 @@ class Ex3_Task2:
 
         plt.show()
 
-    def extract_data(self, linear_or_log):
+    def extract_data(self):
         file = open("Exercise3/r-data/flows.txt", "r")
         raw_data = file.read()
         str_data = raw_data.split("\n")
@@ -98,5 +93,3 @@ class Ex3_Task2:
         # return raw_data, sorted_data, log_data, sorted_log_data, number_of_data_points (i.e index or number of
         # lines in data set)
         return int_data, sorted_data, log_data, sorted_log_data, number_of_data_points
-
-    # TODO: method to scale to log scale
