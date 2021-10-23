@@ -15,7 +15,7 @@ class Ex3_Task2:
 
         hist = plt.figure("II. Histogram")
         # numbers = [0.1, 0.5, 1, 1.5, 2, 4, 5.5, 6, 8, 9]
-        plt.hist(raw_data, bins=5)
+        plt.hist(raw_data, bins=2)
         plt.title("Flow lengths in bytes and its frequency")
         plt.xlabel("Flow length (bytes)")
         plt.ylabel("Frequency")

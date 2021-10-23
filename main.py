@@ -5,7 +5,7 @@ from Exercise3.Ex3_Task5 import Ex3_Task5
 
 if __name__ == '__main__':
     e3t2 = Ex3_Task2()
-    # e3t2.plot()
+    e3t2.plot()
 
     # input number of dataset available
     e3t3 = Ex3_Task3()
@@ -15,4 +15,4 @@ if __name__ == '__main__':
     # e3t4.plot()
 
     e3t5 = Ex3_Task5()
-    e3t5.plot()
+    # e3t5.plot()
