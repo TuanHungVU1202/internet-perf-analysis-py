@@ -1,5 +1,6 @@
 from Exercise3.Ex3_Task2 import Ex3_Task2
 from Exercise3.Ex3_Task3 import Ex3_Task3
+from Exercise3.Ex3_Task4 import Ex3_Task4
 
 if __name__ == '__main__':
     e3t2 = Ex3_Task2()
@@ -7,4 +8,7 @@ if __name__ == '__main__':
 
     # input number of dataset available
     e3t3 = Ex3_Task3()
-    e3t3.plot(4)
+    # e3t3.plot(4)
+
+    e3t4 = Ex3_Task4()
+    e3t4.plot()
