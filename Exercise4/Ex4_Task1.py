@@ -4,10 +4,17 @@ import re
 
 
 class Ex4_Task1:
-    def calculate_stat(self):
+    def get_answers(self):
         raw_data = self.read_file()
-        sorted_data_list = self.sort_by_col(raw_data)
-        print(sorted_data_list[0])
+        lists = self.sort_by_col(raw_data)
+
+        # 3 lists from list_packets, list_bytes, list_flows
+        for list in lists:
+            # iterate through each list
+            for element in list:
+                # get number of packets/bytes/flows, add to a list to calculate stats
+                print(element[1])
+
 
     def read_file(self):
         raw_data = []
@@ -52,3 +59,7 @@ class Ex4_Task1:
             lists_sorted_list.append(list_sort)
 
         return lists_sorted_list
+
+    def cal_stats(self, sorted_data):
+        # return max, min, med, mean
+        pass

@@ -19,4 +19,4 @@ if __name__ == '__main__':
     # e3t5.plot()
 
     e4t1 = Ex4_Task1()
-    e4t1.calculate_stat()
+    e4t1.get_answers()
