@@ -4,14 +4,10 @@ import re
 
 
 class Ex4_Task1:
-    # col number 7, 8, 9 from crl_flow output
-    # 7: packets, 8: bytes, 9: flows
-    columns = [7, 8, 9]
-    lists_sorted_list = []
-
     def calculate_stat(self):
         raw_data = self.read_file()
-        self.sort_by_col(raw_data)
+        sorted_data_list = self.sort_by_col(raw_data)
+        print(sorted_data_list[0])
 
     def read_file(self):
         raw_data = []
@@ -24,7 +20,12 @@ class Ex4_Task1:
         return raw_data
 
     def sort_by_col(self, raw_data):
-        for col in self.columns:
+        # col number 7, 8, 9 from crl_flow output
+        # 7: packets, 8: bytes, 9: flows
+        columns = [7, 8, 9]
+        lists_sorted_list = []
+
+        for col in columns:
             pairs = {}
             for line in raw_data:
                 if line == '\n' or line[0] == '#':
@@ -48,6 +49,6 @@ class Ex4_Task1:
 
             sorted_dict = sorted(pairs.items(), key=lambda x: x[1], reverse=True)
             list_sort = list(sorted_dict)
-            self.lists_sorted_list.append(list_sort)
+            lists_sorted_list.append(list_sort)
 
-        print(self.lists_sorted_list[2])
+        return lists_sorted_list
