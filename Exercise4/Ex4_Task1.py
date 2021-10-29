@@ -3,6 +3,9 @@ import os
 import re
 import statistics as stat
 
+import numpy as np
+from matplotlib import pyplot as plt
+
 
 class Ex4_Task1:
     def get_answers(self):
@@ -43,6 +46,29 @@ class Ex4_Task1:
         self.cal_stats(flow_num)
         print("Top 10 pairs sorted by FLOWS")
         self.get_top_n_pair(flow_pairs, flow_num, 10)
+
+        self.plot(flow_pairs[:100], flow_num[:100])
+
+    def plot(self, pairs, data):
+        # Linear scale
+        plot = plt.figure("Linear scale - Task 1.III")
+        plt.title("Linear scale - Number of flows")
+        plt.xlabel("Pairs")
+        plt.ylabel("Number of flows")
+        plt.xticks(rotation=90)
+        plt.tight_layout()
+        plt.bar(pairs, data, linestyle='solid')
+
+        # Logarithm scale
+        plot = plt.figure("Logarithmic scale - Task 1.III")
+        plt.title("Logarithmic scale - Number of flows")
+        plt.xlabel("Pairs")
+        plt.ylabel("Number of flows")
+        plt.xticks(rotation=90)
+        plt.tight_layout()
+        plt.bar(pairs, np.log(data), linestyle='solid')
+
+        plt.show()
 
     def read_file(self):
         raw_data = []
