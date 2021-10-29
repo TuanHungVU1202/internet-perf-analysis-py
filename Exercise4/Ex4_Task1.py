@@ -1,20 +1,48 @@
 import glob
 import os
 import re
+import statistics as stat
 
 
 class Ex4_Task1:
     def get_answers(self):
+        packet_num = []
+        byte_num = []
+        byte_pairs = []
+        flow_num = []
+        flow_pairs = []
+
         raw_data = self.read_file()
         lists = self.sort_by_col(raw_data)
 
         # 3 lists from list_packets, list_bytes, list_flows
-        for list in lists:
+        for idx, list in enumerate(lists):
             # iterate through each list
-            for element in list:
+            for pair, data_count in list:
                 # get number of packets/bytes/flows, add to a list to calculate stats
-                print(element[1])
+                if idx == 0:
+                    packet_num.append(data_count)
+                elif idx == 1:
+                    byte_num.append(data_count)
+                    byte_pairs.append(pair)
+                elif idx == 2:
+                    flow_num.append(data_count)
+                    flow_pairs.append(pair)
 
+        # Packets
+        print("Calculating stats based on PACKETS")
+        self.cal_stats(packet_num)
+        # Bytes
+        print("Calculating stats based on BYTES")
+        self.cal_stats(byte_num)
+        # get top 10
+        print("Top 10 pairs sorted by BYTES")
+        self.get_top_n_pair(byte_pairs, byte_num, 10)
+        # Flow
+        print("Calculating stats based on FLOWS")
+        self.cal_stats(flow_num)
+        print("Top 10 pairs sorted by FLOWS")
+        self.get_top_n_pair(flow_pairs, flow_num, 10)
 
     def read_file(self):
         raw_data = []
@@ -62,4 +90,17 @@ class Ex4_Task1:
 
     def cal_stats(self, sorted_data):
         # return max, min, med, mean
-        pass
+        sum_element = sum(sorted_data)
+        min_element = min(sorted_data)
+        max_element = max(sorted_data)
+        mean = sum_element/len(sorted_data)
+        median = stat.median(sorted_data)
+        print("Sum = " + str(sum_element))
+        print("Min = " + str(min_element))
+        print("Max = " + str(max_element))
+        print("Mean = " + str(mean))
+        print("Median = " + str(median) + '\n')
+
+    def get_top_n_pair(self, pairs, data_count, number_of_result):
+        for idx in range(number_of_result):
+            print(str(idx + 1) + '\t' + pairs[idx] + '\t' + str(data_count[idx]))
