@@ -18,7 +18,7 @@ class Ex5_Task2:
         plt.ylabel("Frequency")
         plt.hist(orig_data, bins='auto')
         plt.axvline(int(orig_data.mean()), color='k', linestyle='dashed', linewidth=1)
-        plt.text(int(orig_data.mean())+5000, 800, "Mean= " + str(orig_data.mean().item()))
+        plt.text(int(orig_data.mean()) + 5000, 800, "Mean= " + str(orig_data.mean().item()))
 
         # 2. 5000 samples
         plot_5k = plt.figure("2. 5000 Samples")
@@ -44,7 +44,6 @@ class Ex5_Task2:
         # Q-Q plot against normal dist - 10k-5
         plot_10k_5_qq = plt.figure("3. QQ plot 10000 Samples - Size 5")
         stats.probplot(sampl_10k_5, dist="norm", plot=pylab)
-
 
         # 4. 10000 samples - Size 10
         plot_10k_10 = plt.figure("4. 10000 Samples - Size 10")
@@ -76,7 +75,6 @@ class Ex5_Task2:
 
         pylab.show()
         plt.show()
-
 
     def extract_data(self):
         file_path = '/Users/hungvu/Desktop/E7130/e5/sampling-data/sampling.txt'
