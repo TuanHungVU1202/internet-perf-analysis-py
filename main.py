@@ -6,6 +6,7 @@ from Exercise4.Ex4_Task1 import Ex4_Task1
 from Exercise4.Ex4_Task4 import Ex4_Task4
 from Exercise5.Ex5_Task1 import Ex5_Task1
 from Exercise5.Ex5_Task2 import Ex5_Task2
+from Exercise5.Ex5_Task3 import Ex5_Task3
 
 if __name__ == '__main__':
     e3t2 = Ex3_Task2()
@@ -31,5 +32,8 @@ if __name__ == '__main__':
     # e5t1.plot()
 
     e5t2 = Ex5_Task2()
-    e5t2.plot()
+    # e5t2.plot()
+
+    e5t3 = Ex5_Task3()
+    e5t3.plot()
 
