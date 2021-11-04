@@ -7,11 +7,26 @@ from pandas.plotting import parallel_coordinates
 
 class Ex5_Task1:
     def plot(self):
-        data = self.extract_data()
-        samples = data.sample(1000)
-        parallel_coordinates(samples, 'flows', cols=["src", "dst", "proto", "valid", "sport", "dport", "pkt", "bytes", "flows",
+        data, sport80 = self.extract_data()
+
+        # I. samping 1000 from original data
+        plot_1k = plt.figure("I. 1000 samples - Original")
+        plt.title("1000 random samples")
+        plt.xlabel("Variables")
+        plt.ylabel("Value")
+        parallel_coordinates(data.sample(1000), 'flows', cols=["src", "dst", "proto", "valid", "sport", "dport", "pkt", "bytes", "flows",
                         "start", "end"])
         plt.tight_layout()
+
+        # II. samping 1000 from source port 80 only
+        sport80_plt = plt.figure("II. Source port 80 data")
+        plt.title("Source port 80")
+        plt.xlabel("Variables")
+        plt.ylabel("Value")
+        parallel_coordinates(sport80, 'flows', cols=["src", "dst", "proto", "valid", "sport", "dport", "pkt", "bytes", "flows",
+                        "start", "end"])
+        plt.tight_layout()
+
         plt.show()
 
     def extract_data(self):
@@ -19,4 +34,5 @@ class Ex5_Task1:
         data = pandas.read_csv(file_path, sep='\t')
         data.columns = ["src", "dst", "proto", "valid", "sport", "dport", "pkt", "bytes", "flows",
                         "start", "end"]
-        return data.astype(str)
+        sport80 = data[data.sport == 80]
+        return data.astype(str), sport80.astype(str)
