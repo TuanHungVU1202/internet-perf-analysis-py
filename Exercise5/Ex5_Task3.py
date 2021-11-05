@@ -1,34 +1,35 @@
 import pandas
 from matplotlib import pyplot as plt
-import numpy as np
-import pandas as pd
-import seaborn as sns
 from fitter import Fitter, get_common_distributions, get_distributions
+
 
 class Ex5_Task3:
     def plot(self):
         data_a, data_b, data_c = self.extract_data()
 
-        # # 1. distr A
-        # dist_a = plt.figure("A")
-        # plt.title("A data")
-        # plt.xlabel("Bins")
-        # plt.ylabel("Frequency")
-        # plt.hist(data_a, bins='auto')
+        # 1. distr A
+        dist_a = plt.figure("A - Histogram")
+        plt.title("A data")
+        plt.xlabel("Bins")
+        plt.ylabel("Frequency")
+        plt.hist(data_a, bins=100)
+        plt.tight_layout()
 
-        # # 2. distr b
-        # dist_b = plt.figure("B")
-        # plt.title("B data")
-        # plt.xlabel("Bins")
-        # plt.ylabel("Frequency")
-        # plt.hist(data_b, bins='auto')
+        # 2. distr b
+        dist_b = plt.figure("B - Histogram")
+        plt.title("B data")
+        plt.xlabel("Bins")
+        plt.ylabel("Frequency")
+        plt.hist(data_b, bins=50)
+        plt.tight_layout()
 
         # 3. distr c
-        # dist_c = plt.figure("C")
-        # plt.title("C data")
-        # plt.xlabel("Bins")
-        # plt.ylabel("Frequency")
-        # plt.hist(np.log(data_c), bins='auto')
+        dist_c = plt.figure("C - Histogram")
+        plt.title("C data")
+        plt.xlabel("Bins")
+        plt.ylabel("Frequency")
+        plt.hist(data_c, bins=50)
+        plt.tight_layout()
 
         plt.show()
 
@@ -40,16 +41,34 @@ class Ex5_Task3:
         data_b = pandas.read_csv(file_b, header=None)
         data_c = pandas.read_csv(file_c, header=None)
 
-        # f = Fitter(data_c,
-        #            distributions=['gamma',
-        #                           'lognorm',
-        #                           "beta",
-        #                           "burr",
-        #                           "norm"])
+        # A - cauchy
+        # B - lognorm
+        # C - expon
 
-        f = Fitter(data_a,
-                   distributions=get_common_distributions())
-        f.fit()
-        print(f.summary())
+        # Taking samples
+        sample_a = data_a.sample(int(len(data_a) / 2))
+        sample_b = data_b.sample(int(len(data_b) / 2))
+        sample_c = data_c.sample(int(len(data_c) / 2))
 
+        fit_a = Fitter(sample_a,
+                       distributions=get_common_distributions())
+        fit_a.fit()
+        print("Summary fitting A distribution")
+        print(fit_a.summary())
+        print(fit_a.get_best(method='sumsquare_error'))
+
+        fit_b = Fitter(sample_b,
+                       distributions=get_common_distributions())
+        fit_b.fit()
+        print("Summary fitting B distribution")
+        print(fit_b.summary())
+        print(fit_b.get_best(method='sumsquare_error'))
+
+        fit_c = Fitter(sample_c,
+                       distributions=get_common_distributions())
+        fit_c.fit()
+        print("Summary fitting C distribution")
+        print(fit_c.summary())
+        print(fit_c.get_best(method='sumsquare_error'))
         return data_a, data_b, data_c
+
