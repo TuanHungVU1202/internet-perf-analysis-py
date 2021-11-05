@@ -50,8 +50,22 @@ class Ex5_Task3:
         sample_b = data_b.sample(int(len(data_b) / 2))
         sample_c = data_c.sample(int(len(data_c) / 2))
 
+        # fit_a = Fitter(data_a,
+        #                distributions=get_common_distributions())
         fit_a = Fitter(data_a,
-                       distributions=get_common_distributions())
+                       distributions=[
+                           "cauchy",
+                           "chi2",
+                           "expon",
+                           "exponpow",
+                           "gamma",
+                           "lognorm",
+                           "norm",
+                           "powerlaw",
+                           "rayleigh",
+                           "uniform",
+                           "pareto"
+                       ])
         fit_a.fit()
         print("Summary fitting A distribution")
         print(fit_a.summary())
@@ -71,4 +85,3 @@ class Ex5_Task3:
         print(fit_c.summary())
         print("Parameters: " + str(fit_c.get_best(method='sumsquare_error')))
         return data_a, data_b, data_c
-
