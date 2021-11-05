@@ -55,20 +55,20 @@ class Ex5_Task3:
         fit_a.fit()
         print("Summary fitting A distribution")
         print(fit_a.summary())
-        print(fit_a.get_best(method='sumsquare_error'))
+        print("Parameters: " + str(fit_a.get_best(method='sumsquare_error')))
 
         fit_b = Fitter(sample_b,
                        distributions=get_common_distributions())
         fit_b.fit()
         print("Summary fitting B distribution")
         print(fit_b.summary())
-        print(fit_b.get_best(method='sumsquare_error'))
+        print("Parameters: " + str(fit_b.get_best(method='sumsquare_error')))
 
         fit_c = Fitter(sample_c,
                        distributions=get_common_distributions())
         fit_c.fit()
         print("Summary fitting C distribution")
         print(fit_c.summary())
-        print(fit_c.get_best(method='sumsquare_error'))
+        print("Parameters: " + str(fit_c.get_best(method='sumsquare_error')))
         return data_a, data_b, data_c
 
