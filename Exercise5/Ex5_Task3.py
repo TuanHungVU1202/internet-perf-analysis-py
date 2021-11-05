@@ -41,7 +41,7 @@ class Ex5_Task3:
         data_b = pandas.read_csv(file_b, header=None)
         data_c = pandas.read_csv(file_c, header=None)
 
-        # A - cauchy
+        # A - perato
         # B - lognorm
         # C - expon
 
@@ -64,7 +64,7 @@ class Ex5_Task3:
                            "powerlaw",
                            "rayleigh",
                            "uniform",
-                           "pareto"
+                           "pareto", "weibull_max", "weibull_min"
                        ])
         fit_a.fit()
         print("Summary fitting A distribution")
