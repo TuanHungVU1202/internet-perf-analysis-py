@@ -46,13 +46,14 @@ class Ex5_Task3:
         # C - expon
 
         # Taking samples
+        # to Validate
         sample_a = data_a.sample(int(len(data_a) / 2))
         sample_b = data_b.sample(int(len(data_b) / 2))
         sample_c = data_c.sample(int(len(data_c) / 2))
 
         # fit_a = Fitter(data_a,
         #                distributions=get_common_distributions())
-        fit_a = Fitter(data_a,
+        fit_a = Fitter(sample_a,
                        distributions=[
                            "cauchy",
                            "chi2",
@@ -71,14 +72,14 @@ class Ex5_Task3:
         print(fit_a.summary())
         print("Parameters: " + str(fit_a.get_best(method='sumsquare_error')))
 
-        fit_b = Fitter(data_b,
+        fit_b = Fitter(sample_b,
                        distributions=get_common_distributions())
         fit_b.fit()
         print("Summary fitting B distribution")
         print(fit_b.summary())
         print("Parameters: " + str(fit_b.get_best(method='sumsquare_error')))
 
-        fit_c = Fitter(data_c,
+        fit_c = Fitter(sample_c,
                        distributions=get_common_distributions())
         fit_c.fit()
         print("Summary fitting C distribution")
