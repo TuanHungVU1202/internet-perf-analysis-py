@@ -53,6 +53,7 @@ class Ex5_Task1:
 
         # IV
         data['ave_throughput'] = data['bytes'] / (data['end'] - data['start'])
-        print(data)
-
+        filtered_data = data.replace([np.inf, -np.inf], np.nan).dropna(axis=0)
+        print(filtered_data)
+        print("Mean= " + str(filtered_data['ave_throughput'].mean()) + " - Median= " + str(filtered_data['ave_throughput'].median()))
         return data, data.astype(str), sport80.astype(str)
