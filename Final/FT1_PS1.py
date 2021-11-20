@@ -1,0 +1,78 @@
+import pandas
+from matplotlib import pyplot as plt
+
+
+class FT1_PS1:
+    def plot(self):
+        ports, vol_1, vol_2 = self.extract_data()
+
+        # 1.1
+        hist = plt.figure("1.1. Port distribution")
+        # plt.hist(ports, bins='auto')
+        plt.title("Port distribution")
+        plt.xlabel("Port number")
+        plt.ylabel("Freq")
+
+        # 1.2 - 60s
+        plot12_1 = plt.figure("1.2. Traffic Volume - 60s")
+        plt.plot(vol_1)
+        plt.title("Traffic Volume - 60s")
+        plt.xlabel("Time")
+        plt.ylabel("Traffic bytes/60s")
+
+        # 1.2 - 1800s
+        plot12_2 = plt.figure("1.2. Traffic Volume - 1800s")
+        plt.plot(vol_2)
+        plt.title("Traffic Volume - 1800s")
+        plt.xlabel("Time")
+        plt.ylabel("Traffic bytes/1800s")
+
+        plt.show()
+
+    def extract_data(self):
+        ps1 = '/Users/hungvu/Desktop/E7130/final/out/ps1'
+        col_name = ['tcp.sp', 'tcp.dp', 'udp.sp', 'udp.dp', 'len', 'time']
+        data = pandas.read_csv(ps1, sep=',', names=col_name)
+
+        # 1.1
+        ports = []
+
+        for col in data.columns[:4]:
+            for port in data[col].dropna().values:
+                ports.append(int(port))
+
+        # 1.2
+        start_1 = data['time'].values[0]
+        start_2 = data['time'].values[0]
+        # traffic vol for time scale 1 and 2
+        bytes_1 = []
+        bytes_2 = []
+        byte_1_interval = 0
+        bytes_2_interval = 0
+
+        # time scale 1 - interval = 1m = 60s
+        for idx, time in enumerate(data['time']):
+            if time <= start_1 + 60:
+                byte_1_interval = byte_1_interval + data['len'].values[idx]
+            else:
+                bytes_1.append(byte_1_interval)
+                start_1 = data['time'].values[idx]
+                byte_1_interval = 0
+
+        # time scale 2 - interval = 30m = 1800s
+        for idx, time in enumerate(data['time']):
+            if time <= start_2 + 1800:
+                bytes_2_interval = bytes_2_interval + data['len'].values[idx]
+            else:
+                bytes_2.append(bytes_2_interval)
+                start_2 = data['time'].values[idx]
+                bytes_2_interval = 0
+
+        # 1.3
+
+        # for performance check
+        # start_time = timeit.default_timer()
+        # elapsed = timeit.default_timer() - start_time
+        # print(elapsed)
+        return ports, bytes_1, bytes_2
+
