@@ -44,8 +44,8 @@ if __name__ == '__main__':
     # e5t4.plot()
 
     ft1ps1 = FT1_PS1()
-    ft1ps1.plot()
+    # ft1ps1.plot()
 
     ft1ps2 = FT1_PS2()
-    # ft1ps2.plot()
+    ft1ps2.plot()
 
