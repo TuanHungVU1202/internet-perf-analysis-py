@@ -2,14 +2,16 @@ import glob
 import os
 
 import numpy as np
+from fitter import Fitter, get_common_distributions
 from geolite2 import geolite2
 import pandas
 from matplotlib import pyplot as plt
+from sklearn.model_selection import train_test_split
 
 
 class FT1_PS2:
     def plot(self):
-        ports, vol_1, vol_2, countries = self.extract_data()
+        orig_data, ports, vol_1, vol_2, countries, stats = self.extract_data()
 
         # 1.4
         hist = plt.figure("1.4. Port distribution")
@@ -39,6 +41,28 @@ class FT1_PS2:
         plt.xlabel("Countries")
         plt.xticks(rotation=45)
         plt.ylabel("Freq")
+
+        # 1.8
+        # flow length = total number of packets in a flow
+        hist_flowlen = plt.figure("1.8. Flow length distribution")
+        plt.hist(np.log(orig_data['pkt']), bins='auto')
+        plt.title("Flow length distribution - Log scale")
+        plt.xlabel("Packets number")
+        plt.ylabel("Freq")
+
+        # 1.8 ecdf
+        plot_ecdf = plt.figure("1.8. Empirical Cumulative Distribution")
+        X, y = self.ecdf(np.log(orig_data['pkt']))
+        plt.plot(X, y, marker='.', linestyle='none')
+        plt.title("ECDF")
+        plt.xlabel("Packet length")
+        plt.ylabel("Proportion")
+
+        # 1.8 key stats
+        stat_plot = plt.figure("1.8. Statistics Summary")
+        stats.reset_index(inplace=True)
+        plt.plot(stats.iloc[:, 0].values, stats['pkt_log'].values)
+        plt.title("Statistics Summary")
 
         plt.show()
 
@@ -107,7 +131,28 @@ class FT1_PS2:
 
         # 1.7
 
-        return ports, bytes_1, bytes_2, countries
+        # 1.8
+        # key statistics
+        stat = data.describe()
+        stat['pkt_log'] = np.log(stat['pkt'])
+
+        # 1.9
+        train, test = train_test_split(data['pkt'], test_size=0.4)
+        fit_train = Fitter(train,
+                           distributions=get_common_distributions())
+        fit_test = Fitter(test,
+                          distributions=get_common_distributions())
+        fit_train.fit()
+        print("Summary fitting")
+        print(fit_train.summary())
+        print("Parameters: " + str(fit_train.get_best(method='sumsquare_error')))
+
+        fit_test.fit()
+        print("Summary Evaluating")
+        print(fit_test.summary())
+        print("Parameters: " + str(fit_test.get_best(method='sumsquare_error')))
+
+        return data, ports, bytes_1, bytes_2, countries, stat
 
     def read_file(self):
         raw_data = []
@@ -165,3 +210,8 @@ class FT1_PS2:
 
         return country
 
+    # ECDF function to generate x and y axis data
+    def ecdf(self, xdata):
+        xdataecdf = np.sort(xdata)
+        ydataecdf = np.arange(1, len(xdata) + 1) / len(xdata)
+        return xdataecdf, ydataecdf
