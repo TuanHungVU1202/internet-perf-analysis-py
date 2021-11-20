@@ -1,14 +1,16 @@
+import numpy as np
 import pandas
 from matplotlib import pyplot as plt
+import seaborn as sns
 
 
 class FT1_PS1:
     def plot(self):
-        ports, vol_1, vol_2 = self.extract_data()
+        orig_data, ports, vol_1, vol_2, max_bins, stats = self.extract_data()
 
         # 1.1
         hist = plt.figure("1.1. Port distribution")
-        # plt.hist(ports, bins='auto')
+        plt.hist(ports, bins='auto', log=True)
         plt.title("Port distribution")
         plt.xlabel("Port number")
         plt.ylabel("Freq")
@@ -27,6 +29,31 @@ class FT1_PS1:
         plt.xlabel("Time")
         plt.ylabel("Traffic bytes/1800s")
 
+        # 1.3
+        hist13 = plt.figure("1.3. Packet length distribution")
+        plt.hist(orig_data['len'], bins=max_bins, log=True)
+        plt.title("Packet length distribution")
+        plt.xlabel("Packet length")
+        plt.ylabel("Freq")
+
+        # ecdf
+        plot_ecdf = plt.figure("1.3. Empirical Cumulative Distribution")
+        X, y = self.ecdf(orig_data['len'])
+        plt.plot(X, y, marker='.', linestyle='none')
+        plt.title("Empirical Cumulative Distribution")
+        plt.xlabel("Packet length")
+        plt.ylabel("Proportion")
+
+        # 1.3 key stats
+        stat_plot = plt.figure("1.3. Statistics Summary")
+        stats.reset_index(inplace=True)
+        plt.plot(stats.iloc[:, 0].values, stats['len_log'].values)
+        plt.title("Statistics Summary")
+        # other ways to plot
+        # stats.plot(kind='line', x='index', y='len_log')
+        # sns.catplot(x='index', y='len_log', data=stats)
+
+        # plt.tight_layout()
         plt.show()
 
     def extract_data(self):
@@ -69,10 +96,17 @@ class FT1_PS1:
                 bytes_2_interval = 0
 
         # 1.3
-
+        # key statistics
+        stat = data.describe()
+        stat['len_log'] = np.log(stat['len'])
         # for performance check
         # start_time = timeit.default_timer()
         # elapsed = timeit.default_timer() - start_time
         # print(elapsed)
-        return ports, bytes_1, bytes_2
+        return data, ports, bytes_1, bytes_2, data['len'].max(), stat
 
+    # ECDF function to generate x and y axis data
+    def ecdf(self, xdata):
+        xdataecdf = np.sort(xdata)
+        ydataecdf = np.arange(1, len(xdata) + 1) / len(xdata)
+        return xdataecdf, ydataecdf
