@@ -1,7 +1,6 @@
 import numpy as np
 import pandas
 from matplotlib import pyplot as plt
-import seaborn as sns
 
 
 class FT1_PS1:
