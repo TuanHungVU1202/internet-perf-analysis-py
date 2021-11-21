@@ -11,7 +11,7 @@ from sklearn.model_selection import train_test_split
 
 class FT1_PS2:
     def plot(self):
-        orig_data, ports, vol_1, vol_2, countries, stats = self.extract_data()
+        orig_data, ports, vol_1, vol_2, countries, stats, sorted_flows, sorted_bytes, flow_count = self.extract_data()
 
         # 1.4
         hist = plt.figure("1.4. Port distribution")
@@ -22,14 +22,14 @@ class FT1_PS2:
 
         # 1.5 - 1s
         plot15_1 = plt.figure("1.5. Traffic Volume - 1s")
-        plt.plot(vol_1)
+        plt.plot(vol_1,  marker='.')
         plt.title("Traffic Volume - 1s")
         plt.xlabel("Time")
         plt.ylabel("Traffic bytes/s")
 
-        # 1.2 - 60s
+        # 1.5 - 60s
         plot15_2 = plt.figure("1.5. Traffic Volume - 60s")
-        plt.plot(vol_2)
+        plt.plot(vol_2,  marker='.')
         plt.title("Traffic Volume - 60s")
         plt.xlabel("Time")
         plt.ylabel("Traffic bytes/60s")
@@ -42,27 +42,54 @@ class FT1_PS2:
         plt.xticks(rotation=45)
         plt.ylabel("Freq")
 
+        # 1.7
+        plot17_flow = plt.figure("1.7. Pairs Distribution by Flows")
+        x, y = zip(*sorted_flows)
+        plt.plot(x, y)
+        plt.title("Pairs Distribution by Flows")
+        plt.xlabel("Origin - Destination Pairs")
+        plt.xticks(" ")
+        plt.ylabel("Flows")
+
+        plot17_bytes = plt.figure("1.7. Pairs Distribution by Bytes")
+        x, y = zip(*sorted_bytes)
+        plt.plot(x, y)
+        plt.title("Pairs Distribution by Bytes")
+        plt.xlabel("Origin - Destination Pairs")
+        plt.xticks(" ")
+        plt.ylabel("Bytes")
+
         # 1.8
         # flow length = total number of packets in a flow
         hist_flowlen = plt.figure("1.8. Flow length distribution")
-        plt.hist(np.log(orig_data['pkt']), bins='auto')
+        # plt.hist(np.log(orig_data['pkt']), bins='auto')
+        plt.hist(np.log(orig_data['bytes']), bins='auto')
         plt.title("Flow length distribution - Log scale")
-        plt.xlabel("Packets number")
+        plt.xlabel("Flow length")
         plt.ylabel("Freq")
 
         # 1.8 ecdf
         plot_ecdf = plt.figure("1.8. Empirical Cumulative Distribution")
-        X, y = self.ecdf(np.log(orig_data['pkt']))
+        # X, y = self.ecdf(np.log(orig_data['pkt']))
+        X, y = self.ecdf(np.log(orig_data['bytes']))
         plt.plot(X, y, marker='.', linestyle='none')
         plt.title("ECDF")
-        plt.xlabel("Packet length")
+        plt.xlabel("Flow length")
         plt.ylabel("Proportion")
 
         # 1.8 key stats
         stat_plot = plt.figure("1.8. Statistics Summary")
         stats.reset_index(inplace=True)
-        plt.plot(stats.iloc[:, 0].values, stats['pkt_log'].values)
+        plt.plot(stats.iloc[:, 0].values, stats['bytes_log'].values,  marker='.')
         plt.title("Statistics Summary")
+
+        # 1.10
+        plot110_count = plt.figure("1.10. Number of Flows each timeout")
+        timeouts = [1, 10, 60, 120, 1800]
+        plt.plot(np.log(timeouts), np.log(flow_count),  marker='.')
+        plt.title("Number of Flows each timeout")
+        plt.xlabel("Timeout Period - Log")
+        plt.ylabel("Number of Flows - Log")
 
         plt.show()
 
@@ -130,14 +157,16 @@ class FT1_PS2:
         countries = data['sc'].append(data['dc']).dropna()
 
         # 1.7
+        sorted_flows = sorted(combine_flows.items(), key=lambda x: x[1], reverse=True)
+        sorted_bytes = sorted(combine_bytes.items(), key=lambda x: x[1], reverse=True)
 
         # 1.8
         # key statistics
         stat = data.describe()
-        stat['pkt_log'] = np.log(stat['pkt'])
+        stat['bytes_log'] = np.log(stat['bytes'])
 
         # 1.9
-        train, test = train_test_split(data['pkt'], test_size=0.4)
+        train, test = train_test_split(data['bytes'], test_size=0.4)
         fit_train = Fitter(train,
                            distributions=get_common_distributions())
         fit_test = Fitter(test,
@@ -152,7 +181,14 @@ class FT1_PS2:
         print(fit_test.summary())
         print("Parameters: " + str(fit_test.get_best(method='sumsquare_error')))
 
-        return data, ports, bytes_1, bytes_2, countries, stat
+        # 1.10
+        timeouts = [1, 10, 60, 120, 1800]
+        flow_count = []
+        for val in timeouts:
+            no_flows = self.count_flow(val)
+            flow_count.append(no_flows)
+
+        return data, ports, bytes_1, bytes_2, countries, stat, list(sorted_flows), list(sorted_bytes), flow_count
 
     def read_file(self):
         raw_data = []
@@ -215,3 +251,14 @@ class FT1_PS2:
         xdataecdf = np.sort(xdata)
         ydataecdf = np.arange(1, len(xdata) + 1) / len(xdata)
         return xdataecdf, ydataecdf
+
+    # 1.10
+    def count_flow(self, timeout):
+        raw_data = []
+        file_list = glob.glob(os.path.join(os.getcwd(), "/Users/hungvu/Desktop/E7130/final/out", "tf" + str(timeout) + "*.t2"))
+        for file_path in file_list:
+            with open(file_path) as f_input:
+                lines = f_input.readlines()
+                for line in lines:
+                    raw_data.append(line)
+        return len(raw_data)
