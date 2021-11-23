@@ -60,7 +60,7 @@ class FT1_PS2:
         plt.ylabel("Bytes")
 
         # 1.8
-        # flow length = total number of packets in a flow
+        # flow length = total number of bytes in a flow
         hist_flowlen = plt.figure("1.8. Flow length distribution")
         # plt.hist(np.log(orig_data['pkt']), bins='auto')
         plt.hist(np.log(orig_data['bytes']), bins='auto')
