@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 
 class FT2:
     def plot(self):
-        fs2, combine_bytes, combine_bytes_ipv4, combine_bytes_ipv6 = self.extract_data()
+        fs2, combine_bytes, combine_bytes_ipv4, combine_bytes_ipv6, ports = self.extract_data()
 
         # hist_data = [i for i in list(combine_bytes.values()) if i != 0]
 
@@ -38,6 +38,22 @@ class FT2:
         plt.title("Aggregate Data Volume - IPv6 - Log Scale")
         plt.xlabel("User (IPv6 address)")
         plt.ylabel("Bytes - Log")
+
+        # Study port
+        hist = plt.figure("2.x. Port distribution")
+        port = list(ports.keys())
+        pkt = list(ports.values())
+        plt.scatter(port, pkt)
+        plt.title("Port distribution")
+        plt.xlabel("Port number")
+        plt.ylabel("Number of packets")
+
+        # Study port
+        hist_log = plt.figure("2.x. Port distribution - Log Scale")
+        plt.scatter(port, np.log(pkt))
+        plt.title("Port distribution - Log Scale")
+        plt.xlabel("Port number")
+        plt.ylabel("Number of packets - Log")
 
         plt.show()
 
@@ -82,7 +98,19 @@ class FT2:
         combine_bytes_ipv4 = self.combine_flow(ipv4, columns[1])
         combine_bytes_ipv6 = self.combine_flow(ipv6, columns[1])
 
-        return df_fs2, combine_bytes, combine_bytes_ipv4, combine_bytes_ipv6
+        # Study port numbers
+        df_fs2['pkt'] = df_fs2['spkt'] + df_fs2['dpkt']
+        ports_pkt = {}
+        cols = ['sport', 'dport']
+        for col in cols:
+            for port in df_fs2[col].values:
+                pkt = df_fs2.loc[df_fs2[col] == port, 'pkt'].values[0]
+                if port in ports_pkt:
+                    ports_pkt[port] = ports_pkt.get(port) + pkt
+                else:
+                    ports_pkt[port] = pkt
+
+        return df_fs2, combine_bytes, combine_bytes_ipv4, combine_bytes_ipv6, ports_pkt
 
     def combine_flow(self, data, col_name):
         pairs = {}

@@ -9,10 +9,19 @@ class FT1_PS1:
 
         # 1.1
         hist = plt.figure("1.1. Port distribution")
-        plt.hist(ports, bins='auto', log=True)
+        port = list(ports.keys())
+        pkt = list(ports.values())
+        plt.scatter(port, pkt)
         plt.title("Port distribution")
         plt.xlabel("Port number")
-        plt.ylabel("Freq")
+        plt.ylabel("Number of packets")
+
+        # 1.1 - Log
+        hist_log = plt.figure("1.1. Port distribution - Log Scale")
+        plt.scatter(port, np.log(pkt))
+        plt.title("Port distribution - Log Scale")
+        plt.xlabel("Port number")
+        plt.ylabel("Number of packets - Log")
 
         # 1.2 - 60s
         plot12_1 = plt.figure("1.2. Traffic Volume - 60s")
@@ -63,9 +72,13 @@ class FT1_PS1:
         # 1.1
         ports = []
 
+        ports_pkt = {}
         for col in data.columns[:4]:
             for port in data[col].dropna().values:
-                ports.append(int(port))
+                if port in ports_pkt:
+                    ports_pkt[port] = ports_pkt.get(port) + 1
+                else:
+                    ports_pkt[port] = 0
 
         # 1.2
         start_1 = data['time'].values[0]
@@ -102,7 +115,7 @@ class FT1_PS1:
         # start_time = timeit.default_timer()
         # elapsed = timeit.default_timer() - start_time
         # print(elapsed)
-        return data, ports, bytes_1, bytes_2, data['len'].max(), stat
+        return data, ports_pkt, bytes_1, bytes_2, data['len'].max(), stat
 
     # ECDF function to generate x and y axis data
     def ecdf(self, xdata):

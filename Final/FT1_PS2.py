@@ -11,14 +11,23 @@ from sklearn.model_selection import train_test_split
 
 class FT1_PS2:
     def plot(self):
-        orig_data, ports, vol_1, vol_2, countries, stats, sorted_flows, sorted_bytes, flow_count = self.extract_data()
+        orig_data, ports, vol_1, vol_2, countries, stats, sorted_bytes, sorted_flows, flow_count = self.extract_data()
 
         # 1.4
         hist = plt.figure("1.4. Port distribution")
-        plt.hist(ports, bins='auto')
+        port = list(ports.keys())
+        pkt = list(ports.values())
+        plt.scatter(port, pkt)
         plt.title("Port distribution")
         plt.xlabel("Port number")
-        plt.ylabel("Freq")
+        plt.ylabel("Number of packets")
+
+        # 1.4
+        hist_log = plt.figure("1.4. Port distribution - Log Scale")
+        plt.scatter(port, np.log(pkt))
+        plt.title("Port distribution - Log Scale")
+        plt.xlabel("Port number")
+        plt.ylabel("Number of packets - Log")
 
         # 1.5 - 1s
         plot15_1 = plt.figure("1.5. Traffic Volume - 1s")
@@ -43,21 +52,17 @@ class FT1_PS2:
         plt.ylabel("Freq")
 
         # 1.7
-        plot17_flow = plt.figure("1.7. Pairs Distribution by Flows")
-        x, y = zip(*sorted_flows)
-        plt.plot(x, y)
-        plt.title("Pairs Distribution by Flows")
-        plt.xlabel("Origin - Destination Pairs")
-        plt.xticks(" ")
-        plt.ylabel("Flows")
+        plot17_flow = plt.figure("1.7. Pairs Distribution by Flows - Zipf")
+        plt.plot(range(len(sorted_flows)), sorted_flows,  marker='.')
+        plt.title("Pairs Distribution by Flows - Zipf")
+        plt.xlabel("Rank")
+        plt.ylabel("Flows - Log")
 
-        plot17_bytes = plt.figure("1.7. Pairs Distribution by Bytes")
-        x, y = zip(*sorted_bytes)
-        plt.plot(x, y)
-        plt.title("Pairs Distribution by Bytes")
-        plt.xlabel("Origin - Destination Pairs")
-        plt.xticks(" ")
-        plt.ylabel("Bytes")
+        plot17_bytes = plt.figure("1.7. Pairs Distribution by Bytes - Zipf")
+        plt.plot(range(len(sorted_bytes)), sorted_bytes, marker='.')
+        plt.title("Pairs Distribution by Bytes - Zipf")
+        plt.xlabel("Rank")
+        plt.ylabel("Bytes - Log")
 
         # 1.8
         # flow length = total number of bytes in a flow
@@ -105,7 +110,15 @@ class FT1_PS2:
                      "start", "end"]
         # 21962 rows x 11 cols
         data = pandas.read_csv(file_path, sep='\t', names=col_names)
-        ports = data['sport'].append(data['dport'])
+
+        ports_pkt = {}
+        for col in data.columns[4:6]:
+            for port in data[col].values:
+                pkt = data.loc[data[col] == port, 'pkt'].values[0]
+                if port in ports_pkt:
+                    ports_pkt[port] = ports_pkt.get(port) + pkt
+                else:
+                    ports_pkt[port] = pkt
 
         # 1.5
         start_1 = data['end'].values[0]
@@ -156,9 +169,13 @@ class FT1_PS2:
         data['dc'] = dc
         countries = data['sc'].append(data['dc']).dropna()
 
-        # 1.7
-        sorted_flows = sorted(combine_flows.items(), key=lambda x: x[1], reverse=True)
-        sorted_bytes = sorted(combine_bytes.items(), key=lambda x: x[1], reverse=True)
+        # 1.7 Sort and get log scale of values
+        log_bytes = np.log(list(combine_bytes.values()))
+        log_flows = np.log(list(combine_flows.values()))
+        sorted_bytes = np.sort(log_bytes)[::-1]
+        sorted_flows = np.sort(log_flows)[::-1]
+        # sorted_flows = sorted(combine_flows.items(), key=lambda x: x[1], reverse=True)
+        # sorted_bytes = sorted(combine_bytes.items(), key=lambda x: x[1], reverse=True)
 
         # 1.8
         # key statistics
@@ -188,7 +205,7 @@ class FT1_PS2:
             no_flows = self.count_flow(val)
             flow_count.append(no_flows)
 
-        return data, ports, bytes_1, bytes_2, countries, stat, list(sorted_flows), list(sorted_bytes), flow_count
+        return data, ports_pkt, bytes_1, bytes_2, countries, stat, sorted_bytes, sorted_flows, flow_count
 
     def read_file(self):
         raw_data = []
