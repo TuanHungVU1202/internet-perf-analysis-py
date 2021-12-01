@@ -12,6 +12,7 @@ from Final.FT1_PS1 import FT1_PS1
 from Final.FT1_PS2 import FT1_PS2
 from Final.FT1_PS3 import FT1_PS3
 from Final.FT2 import FT2
+from Final.FT3_AS1 import FT3_AS1
 
 if __name__ == '__main__':
     e3t2 = Ex3_Task2()
@@ -55,5 +56,7 @@ if __name__ == '__main__':
     # ft1ps3.plot()
 
     ft2 = FT2()
-    ft2.plot()
+    # ft2.plot()
 
+    ft3as1 = FT3_AS1()
+    ft3as1.plot()
