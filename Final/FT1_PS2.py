@@ -67,7 +67,6 @@ class FT1_PS2:
         # 1.8
         # flow length = total number of bytes in a flow
         hist_flowlen = plt.figure("1.8. Flow length distribution")
-        # plt.hist(np.log(orig_data['pkt']), bins='auto')
         plt.hist(np.log(orig_data['bytes']), bins='auto')
         plt.title("Flow length distribution - Log scale")
         plt.xlabel("Flow length")
@@ -75,7 +74,6 @@ class FT1_PS2:
 
         # 1.8 ecdf
         plot_ecdf = plt.figure("1.8. Empirical Cumulative Distribution")
-        # X, y = self.ecdf(np.log(orig_data['pkt']))
         X, y = self.ecdf(np.log(orig_data['bytes']))
         plt.plot(X, y, marker='.', linestyle='none')
         plt.title("ECDF")
