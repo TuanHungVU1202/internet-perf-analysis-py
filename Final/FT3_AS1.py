@@ -13,11 +13,15 @@ class FT3_AS1:
         re_iperf = ["r1", "r2", "r3", "i1", "i2"]
 
         # 3.1.1
-        # boxplot_no_lost = plt.figure("3.1 Successful latency measurements")
         for column in as1:
             plt.figure('3.1 Successful latency - Dataset ' + column)
             col_plot = as1.boxplot([column])
             col_plot.set_ylabel("ms")
+
+        plt.figure('3.1 Successful latency measurements - All Datasets')
+        ax = as1.boxplot()
+        ax.set_xlabel("Dataset")
+        ax.set_ylabel("ms")
 
         # 3.1.2
         # Lost packets
@@ -25,11 +29,6 @@ class FT3_AS1:
             plt.figure('3.1 Lost packet - Dataset ' + column)
             col_plot = as1_lost.boxplot([column])
             col_plot.set_ylabel("ms")
-
-        plt.figure('3.1 Successful latency measurements - All Datasets')
-        ax = as1.boxplot()
-        ax.set_xlabel("Dataset")
-        ax.set_ylabel("ms")
 
         # 3.1.3
         # PDF and CDF
@@ -41,8 +40,6 @@ class FT3_AS1:
             plt.legend()
 
         # 3.2
-        # times = [(datetime.datetime(2017, 7, 17, 11, 00, 0) + datetime.timedelta(minutes=60 * x)).time() for x in
-        #          range(len(as1[col]))]
         for col in nameserver:
             plt.figure('3.2 Latency Time Series - Dataset ' + col)
             plt.plot(as1[col], linestyle='solid', marker='.')
@@ -61,7 +58,7 @@ class FT3_AS1:
         autocor_as1 = ["r3", "i1", "i2"]
         for col in autocor_as1:
             as1i2 = plt.figure("3.2 Autocorrelation plot - " + col)
-            plt.title("3.2 Autocorrelation plot")
+            plt.title("3.2 Autocorrelation plot - "+ col)
             plt.xlabel("Lag")
             plt.ylabel("Autocorrelation")
             pd.plotting.autocorrelation_plot(as1[col])
@@ -88,7 +85,7 @@ class FT3_AS1:
         # 3.4.2 Autocorrelation plot
         for col in autocor_as1[1::]:
             as2ix = plt.figure("3.4. Autocorrelation plot - " + col)
-            plt.title("3.4. Autocorrelation plot")
+            plt.title("3.4. Autocorrelation plot - "+ col)
             plt.xlabel("Lag")
             plt.ylabel("Autocorrelation")
             pd.plotting.autocorrelation_plot(as2[col])
@@ -129,7 +126,7 @@ class FT3_AS1:
         pd.set_option('display.precision', 3)
         display(stat)
 
-        # 3.2
+        # 3.3
         sub_col_name = ["bps"]
         for col in col_names[9:11]:
             path = '/Users/hungvu/Desktop/E7130/final/out/AS2.' + col
