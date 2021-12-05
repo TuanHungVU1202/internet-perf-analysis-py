@@ -1,16 +1,14 @@
-import datetime
-
-import matplotlib
-import numpy as np
 import pandas
 import pandas as pd
 from matplotlib import pyplot as plt
 from IPython.display import display
+from scipy import stats
+from scipy.stats.mstats import gmean
 
 
 class FT3_AS1:
     def plot(self):
-        as1, as1_lost, combine = self.extract_data()
+        as1, as1_lost, combine, as2 = self.extract_data()
         nameserver = ["d1", "d2", "d3", "n1", "n2", "n3"]
         re_iperf = ["r1", "r2", "r3", "i1", "i2"]
 
@@ -62,18 +60,45 @@ class FT3_AS1:
         # 3.2.2 Autocorrelation plot
         autocor_as1 = ["r3", "i1", "i2"]
         for col in autocor_as1:
-            as1i2 = plt.figure("Autocorrelation plot - " + col)
-            plt.title("Autocorrelation plot")
+            as1i2 = plt.figure("3.2 Autocorrelation plot - " + col)
+            plt.title("3.2 Autocorrelation plot")
             plt.xlabel("Lag")
             plt.ylabel("Autocorrelation")
             pd.plotting.autocorrelation_plot(as1[col])
 
+        # 3.3
+        plt.figure('3.3 Throughput - All Datasets')
+        ax = as2.boxplot()
+        ax.set_xlabel("Dataset")
+        ax.set_ylabel("bps")
+
+        for column in as2:
+            plt.figure('3.3 Throughput - Dataset ' + column)
+            col_plot = as2.boxplot([column])
+            col_plot.set_ylabel("bps")
+
+        # 3.4.1
+        for col in re_iperf[3::]:
+            plt.figure('3.4 Throughput Time Series - Dataset ' + col)
+            plt.plot(as2[col], linestyle='solid', marker='.')
+            plt.title('Throughput Time Series - Dataset ' + col)
+            plt.xlabel('Time interval - 1 hour')
+            plt.ylabel('Throughput - bps')
+
+        # 3.4.2 Autocorrelation plot
+        for col in autocor_as1[1::]:
+            as2ix = plt.figure("3.4. Autocorrelation plot - " + col)
+            plt.title("3.4. Autocorrelation plot")
+            plt.xlabel("Lag")
+            plt.ylabel("Autocorrelation")
+            pd.plotting.autocorrelation_plot(as2[col])
 
         plt.show()
 
     def extract_data(self):
         col_names = ["d1", "d2", "d3", "n1", "n2", "n3", "r1", "r2", "r3", "i1", "i2"]
         as1 = pd.DataFrame(columns=col_names)
+        as2 = pd.DataFrame(columns=col_names[9:11])
 
         # 3.1.1
         sub_col_name = ["delay"]
@@ -104,4 +129,22 @@ class FT3_AS1:
         pd.set_option('display.precision', 3)
         display(stat)
 
-        return as1, as1_lost, combine
+        # 3.2
+        sub_col_name = ["bps"]
+        for col in col_names[9:11]:
+            path = '/Users/hungvu/Desktop/E7130/final/out/AS2.' + col
+            df = pandas.read_csv(path, header=None, names=sub_col_name)
+            as2[col] = pd.Series(df[sub_col_name[0]])
+
+            # statistics
+            bps_mean = as2[col].mean()
+            bps_hmean = stats.hmean(as2[col])
+            bps_geomean = gmean(as2[col])
+            bps_median = as2[col].median()
+            print(col + ": Mean= " + str(bps_mean))
+            print(col + ": Harmonic Mean= " + str(bps_hmean))
+            print(col + ": Geometric Mean= " + str(bps_geomean))
+            print(col + ": Median= " + str(bps_median))
+
+
+        return as1, as1_lost, combine, as2
